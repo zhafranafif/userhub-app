@@ -1,8 +1,8 @@
-import type { IUser } from "@/lib/types";
-import { Globe, Mail, MapPin, Phone, Building2, Building } from "lucide-react";
+import type { IUserData } from "@/lib/types";
+import { Globe, Mail, MapPin, Phone, Building2, Building, Files, BadgeCheck, AlertCircle } from "lucide-react";
 
 interface UserCardProps {
-    user: IUser;
+    user: IUserData;
 }
 
 export function UserCard({ user }: UserCardProps) {
@@ -54,7 +54,17 @@ export function UserCard({ user }: UserCardProps) {
                 value={`${user.address.city}, ${user.address.zipcode}`}
                 />
             </div>
-        
+            <hr className="border-border" />
+      
+            <div className="flex flex-col gap-2">
+                <p className="text-md font-medium text-primary uppercase tracking-wider">
+                Tasks
+                </p>
+                <ContactRow icon={<Files className="w-4 h-4" />} value={`${user.totalPosts} Total Posts`} />
+                <ContactRow icon={<BadgeCheck className="w-4 h-4" />} value={`${user.completedTodos} Completed Todos`} />
+                <ContactRow icon={<AlertCircle className="w-4 h-4" />} value={`${user.pendingTodos} Pending Todos`} />
+            </div>
+
             <hr className="border-border" />
 
             <div className="flex flex-col gap-2">

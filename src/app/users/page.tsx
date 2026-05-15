@@ -1,7 +1,8 @@
-import { getUsers } from "@/services/users.service";
 import { FilterBar } from "@/component/FilterBar";
 import { SearchBar } from "@/component/SearchBar";
 import { UsersTable } from "@/component/UsersTable";
+import { mapUserData } from "@/service/user-mapper.service";
+import { notFound } from "next/navigation";
 
 interface UsersPageProps {
     searchParams: Promise<{
@@ -18,19 +19,40 @@ export const metadata = {
 export default async function UsersPage({searchParams}: UsersPageProps) {
 
     const params = await searchParams;
-    const users = await getUsers();
+    const mappedUsers = await mapUserData();
+
+    if (mappedUsers.length === 0) {
+        notFound();
+    }
 
     const query = params.query?.toLowerCase() ?? "";
-    const sort = params.sort?.toLowerCase() ?? "asc";
+    const sort = params.sort?.toLowerCase() ?? "name-asc";
+    const detailSearchParams = new URLSearchParams();
 
-    const filteredUsers = users.filter(user => user.name.toLowerCase().includes(query) || user.email.toLowerCase().includes(query));
+    if (params.query) {
+        detailSearchParams.set("query", params.query);
+    }
+
+    if (params.sort) {
+        detailSearchParams.set("sort", params.sort);
+    }
+
+    const filteredUsers = mappedUsers.filter(user => user.name.toLowerCase().includes(query) || user.email.toLowerCase().includes(query));
 
     const sortedUsers = [...filteredUsers].sort((a, b) => {
-        if (sort === "asc") {
-            return a.name.localeCompare(b.name);
-        } else {
+        if (sort === "name-desc") {
             return b.name.localeCompare(a.name);
         }
+
+        if (sort === "pending-desc") {
+            return b.pendingTodos - a.pendingTodos || a.name.localeCompare(b.name);
+        }
+
+        if (sort === "pending-asc") {
+            return a.pendingTodos - b.pendingTodos || a.name.localeCompare(b.name);
+        }
+
+        return a.name.localeCompare(b.name);
     });
 
 
@@ -47,7 +69,7 @@ export default async function UsersPage({searchParams}: UsersPageProps) {
         </div>
 
         <div className="px-5">
-            <UsersTable users={sortedUsers} />
+            <UsersTable users={sortedUsers} detailSearchParams={detailSearchParams.toString()} />
         </div>
     </div>
   );

@@ -24,3 +24,23 @@ export interface IUser {
     website: string;
     company: ICompany;
 }
+
+export interface IPost {
+    userId: number;
+    id: number;
+    title: string;
+    body: string;
+}
+
+export interface ITodo {
+    userId: number;
+    id: number;
+    title: string;
+    completed: boolean;
+}
+
+export interface IUserData extends IUser {
+    totalPosts: number;
+    completedTodos: number;
+    pendingTodos: number;
+}

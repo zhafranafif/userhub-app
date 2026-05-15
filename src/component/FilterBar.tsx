@@ -10,8 +10,10 @@ type SortOption = {
 };
 
 const sortOptions: SortOption[] = [
-  { label: "Name (A → Z)", value: "asc" },
-  { label: "Name (Z → A)", value: "desc" },
+  { label: "Name (A → Z)", value: "name-asc" },
+  { label: "Name (Z → A)", value: "name-desc" },
+  { label: "Most Pending Todos", value: "pending-desc" },
+  { label: "Least Pending Todos", value: "pending-asc" },
 ];
 
 
@@ -19,7 +21,7 @@ export function FilterBar() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const currentSort = searchParams.get("sort") ?? "asc";
+  const currentSort = searchParams.get("sort") ?? "name-asc";
 
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);

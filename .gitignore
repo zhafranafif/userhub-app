@@ -12,6 +12,13 @@
 
 # testing
 /coverage
+/.swc/
+
+# playwright
+/playwright-report/
+/test-results/
+/blob-report/
+/playwright/
 
 # next.js
 /.next/
