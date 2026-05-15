@@ -5,10 +5,15 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
 
-export const metadata: Metadata = {
-    title: "User Detail - UserHub",
-    description: "Detailed information about the user",
-};
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+    const { slug } = await params;
+    const user = await getUserById(Number(slug));
+
+    return {
+        title: `${user.name} - UserHub`,
+        description: `Details information for ${user.name}`,
+    };
+}
 
 export default async function UserDetailPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;

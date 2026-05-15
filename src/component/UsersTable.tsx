@@ -13,17 +13,25 @@ export function UsersTable({ users }: { users: IUser[] }) {
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
-                    {users.map((user: IUser) => (
-                        <tr key={user.id}>
-                            <td className="px-4 py-3 text-sm text-primary">
-                                <a href={`/users/${user.id}`} className="hover:underline">
-                                    {user.name}
-                                </a>
+                    {users.length > 0 ? (
+                        users.map((user: IUser) => (
+                            <tr key={user.id}>
+                                <td className="px-4 py-3 text-sm text-primary">
+                                    <a href={`/users/${user.id}`} className="hover:underline">
+                                        {user.name}
+                                    </a>
+                                </td>
+                                <td className="px-4 py-3 text-sm text-primary">{user.email}</td>
+                                <td className="px-4 py-3 text-sm text-primary">{user.website}</td>
+                            </tr>
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan={3} className="px-4 py-16 text-center text-sm text-primary">
+                                No users found.
                             </td>
-                            <td className="px-4 py-3 text-sm text-primary">{user.email}</td>
-                            <td className="px-4 py-3 text-sm text-primary">{user.website}</td>
                         </tr>
-                    ))}
+                    )}
                 </tbody>
             </table>
         </div>
