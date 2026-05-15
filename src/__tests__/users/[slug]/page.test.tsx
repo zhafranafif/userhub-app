@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import UserDetailPage, { generateMetadata } from "@/app/users/[slug]/page";
 import UserNotFound from "@/app/users/[slug]/not-found";
 import { mapSingleUserData } from "@/service/user-mapper.service";
+import { getPosts, getTodos } from "@/service/users.service";
 import type { IUserData } from "@/lib/types";
 
 jest.mock("@/service/user-mapper.service", () => ({
@@ -15,7 +16,14 @@ jest.mock("next/link", () => ({
   ),
 }));
 
+jest.mock("@/service/users.service", () => ({
+  getPosts: jest.fn(),
+  getTodos: jest.fn(),
+}));
+
 const mockedMapSingleUserData = mapSingleUserData as jest.MockedFunction<typeof mapSingleUserData>;
+const mockedGetPosts = getPosts as jest.MockedFunction<typeof getPosts>;
+const mockedGetTodos = getTodos as jest.MockedFunction<typeof getTodos>;
 
 const mockUser: IUserData = {
   id: 1,
@@ -46,10 +54,19 @@ const mockUser: IUserData = {
 describe("UserDetailPage", () => {
   beforeEach(() => {
     mockedMapSingleUserData.mockReset();
+    mockedGetPosts.mockReset();
+    mockedGetTodos.mockReset();
   });
 
   it("renders the user details with activity sections", async () => {
     mockedMapSingleUserData.mockResolvedValue(mockUser);
+    mockedGetPosts.mockResolvedValue([
+      { id: 1, userId: 1, title: "Post 1", body: "Body 1" },
+    ]);
+    mockedGetTodos.mockResolvedValue([
+      { id: 1, userId: 1, title: "Todo 1", completed: true },
+      { id: 2, userId: 1, title: "Todo 2", completed: false },
+    ]);
 
     const ui = await UserDetailPage({
       params: Promise.resolve({ slug: "1" }),
@@ -66,6 +83,10 @@ describe("UserDetailPage", () => {
     expect(screen.getByText(/8 total posts/i)).toBeInTheDocument();
     expect(screen.getByText(/4 completed todos/i)).toBeInTheDocument();
     expect(screen.getByText(/2 pending todos/i)).toBeInTheDocument();
+    expect(screen.getByText(/activity/i)).toBeInTheDocument();
+    expect(screen.getByText(/todo 1/i)).toBeInTheDocument();
+    expect(screen.getByText(/todo 2/i)).toBeInTheDocument();
+    expect(screen.getByText(/open/i)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /back to list/i })).toHaveAttribute(
       "href",
       "/users?query=leanne&sort=pending-desc"
@@ -74,6 +95,8 @@ describe("UserDetailPage", () => {
 
   it("renders the not found fallback when the user data is missing", async () => {
     mockedMapSingleUserData.mockResolvedValue(null);
+    mockedGetPosts.mockResolvedValue([]);
+    mockedGetTodos.mockResolvedValue([]);
 
     const ui = await UserDetailPage({
       params: Promise.resolve({ slug: "999" }),
@@ -91,6 +114,8 @@ describe("UserDetailPage", () => {
 
   it("renders the detail page back link without query params when search params are absent", async () => {
     mockedMapSingleUserData.mockResolvedValue(mockUser);
+    mockedGetPosts.mockResolvedValue([]);
+    mockedGetTodos.mockResolvedValue([]);
 
     const ui = await UserDetailPage({
       params: Promise.resolve({ slug: "1" }),
@@ -126,6 +151,8 @@ describe("UserDetailPage", () => {
 
   it("returns fallback metadata when the user is missing", async () => {
     mockedMapSingleUserData.mockResolvedValue(null);
+    mockedGetPosts.mockResolvedValue([]);
+    mockedGetTodos.mockResolvedValue([]);
 
     const metadata = await generateMetadata({
       params: Promise.resolve({ slug: "999" }),
@@ -137,6 +164,8 @@ describe("UserDetailPage", () => {
 
   it("returns metadata for a valid user", async () => {
     mockedMapSingleUserData.mockResolvedValue(mockUser);
+    mockedGetPosts.mockResolvedValue([]);
+    mockedGetTodos.mockResolvedValue([]);
 
     const metadata = await generateMetadata({
       params: Promise.resolve({ slug: "1" }),
@@ -147,6 +176,8 @@ describe("UserDetailPage", () => {
   });
 
   it("renders the not found fallback for an invalid user id", async () => {
+    mockedGetPosts.mockResolvedValue([]);
+    mockedGetTodos.mockResolvedValue([]);
     const ui = await UserDetailPage({
       params: Promise.resolve({ slug: "abc" }),
       searchParams: Promise.resolve({ query: "leanne", sort: "name-asc" }),

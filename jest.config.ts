@@ -27,6 +27,8 @@ const config: Config = {
     '<rootDir>/.next/',
     '<rootDir>/node_modules/',
   ],
+
+  testMatch: ['<rootDir>/src/__tests__/**/*.test.{ts,tsx}'],
 };
 
 export default createJestConfig(config);

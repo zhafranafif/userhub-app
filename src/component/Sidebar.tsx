@@ -62,7 +62,7 @@ export default function Sidebar({ children }: { children: ReactNode }) {
 				}`}
 			>
 				<div className="flex h-full flex-col">
-					<div className="flex items-center justify-center border-b border-secondary">
+					<div className="flex flex-col-reverse items-center justify-center border-b border-secondary">
 						<Link href="/" className="flex items-center" onClick={() => setIsOpen(false)}>
 							<Image src={Logo} alt="UserHub" width={200} loading="eager" fetchPriority="high" />
 						</Link>
@@ -71,7 +71,7 @@ export default function Sidebar({ children }: { children: ReactNode }) {
 							type="button"
 							aria-label="Close navigation"
 							onClick={() => setIsOpen(false)}
-							className="ml-auto inline-flex h-10 w-10 items-center justify-center rounded-full text-foreground transition hover:bg-secondary md:hidden"
+							className="ml-auto inline-flex h-10 w-10 items-center justify-center rounded-full text-foreground transition hover:cursor-pointer md:hidden"
 						>
 							<X />
 						</button>

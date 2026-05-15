@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { UsersTable } from "@/component/UsersTable";
 import type { IUserData } from "@/lib/types";
 
@@ -34,26 +34,30 @@ describe("UsersTable", () => {
   it("renders a user row with activity values and a preserved detail link", () => {
     render(<UsersTable users={mockUsers} detailSearchParams="query=leanne&sort=pending-desc" />);
 
-    expect(screen.getByRole("table")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /leanne graham/i })).toHaveAttribute(
+    const table = screen.getByRole("table");
+
+    expect(table).toBeInTheDocument();
+    expect(within(table).getByRole("link", { name: /leanne graham/i })).toHaveAttribute(
       "href",
       "/users/1?query=leanne&sort=pending-desc"
     );
-    expect(screen.getByText("8")).toBeInTheDocument();
-    expect(screen.getByText("4")).toBeInTheDocument();
-    expect(screen.getByText("2")).toBeInTheDocument();
+    expect(within(table).getByText("8")).toBeInTheDocument();
+    expect(within(table).getByText("4")).toBeInTheDocument();
+    expect(within(table).getByText("2")).toBeInTheDocument();
   });
 
   it("shows an empty state when no users are passed", () => {
     render(<UsersTable users={[]} detailSearchParams="" />);
 
-    expect(screen.getByText(/no users found/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/no users found/i).length).toBeGreaterThan(0);
   });
 
   it("renders a detail link without query params when none are provided", () => {
     render(<UsersTable users={mockUsers} detailSearchParams="" />);
 
-    expect(screen.getByRole("link", { name: /leanne graham/i })).toHaveAttribute(
+    const table = screen.getByRole("table");
+
+    expect(within(table).getByRole("link", { name: /leanne graham/i })).toHaveAttribute(
       "href",
       "/users/1"
     );

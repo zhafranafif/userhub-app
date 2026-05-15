@@ -104,9 +104,9 @@ describe("UsersPage", () => {
 		expect(links[0]).toHaveTextContent("Alice Johnson");
 		expect(links[1]).toHaveTextContent("Bob Smith");
 		expect(links[0]).toHaveAttribute("href", "/users/1?sort=pending-desc");
-		expect(screen.getByText("12")).toBeInTheDocument();
-		expect(screen.getByText("7")).toBeInTheDocument();
-		expect(screen.getByText("4")).toBeInTheDocument();
+		expect(within(table).getByText("12")).toBeInTheDocument();
+		expect(within(table).getByText("7")).toBeInTheDocument();
+		expect(within(table).getByText("4")).toBeInTheDocument();
 	});
 
 	it("filters users by search query", async () => {
@@ -118,8 +118,10 @@ describe("UsersPage", () => {
 
 		render(ui);
 
-		expect(screen.getByRole("link", { name: /bob smith/i })).toBeInTheDocument();
-		expect(screen.queryByRole("link", { name: /alice johnson/i })).not.toBeInTheDocument();
+		const table = screen.getByRole("table");
+
+		expect(within(table).getByRole("link", { name: /bob smith/i })).toBeInTheDocument();
+		expect(within(table).queryByRole("link", { name: /alice johnson/i })).not.toBeInTheDocument();
 	});
 
 	it("shows the empty state when the filter removes all rows", async () => {
@@ -131,7 +133,7 @@ describe("UsersPage", () => {
 
 		render(ui);
 
-		expect(screen.getByText(/no users found/i)).toBeInTheDocument();
+		expect(screen.getAllByText(/no users found/i).length).toBeGreaterThan(0);
 	});
 
 	it("calls notFound when there are no users to render", async () => {

@@ -63,7 +63,7 @@ export default async function UsersPage({searchParams}: UsersPageProps) {
             <p className="mt-2 text-md text-primary">A list of all the users in your workspace.</p>
         </div>
 
-        <div className="flex justify-between items-center mt-10">
+        <div className="mt-10 flex items-center justify-between gap-4 max-[954px]:flex-wrap max-[954px]:justify-start max-[954px]:gap-3 max-[768px]:flex-col max-[768px]:items-stretch">
         <SearchBar />
         <FilterBar />
         </div>
